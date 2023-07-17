@@ -1,4 +1,8 @@
+import torch
+
 class CONFIG:
+    
+    MAIN_DIR = "data/cafa-5-protein-function-prediction"
     train_sequences_path = MAIN_DIR  + "/Train/train_sequences.fasta"
     train_labels_path = MAIN_DIR + "/Train/train_terms.tsv"
     test_sequences_path = MAIN_DIR + "/Test (Targets)/testsuperset.fasta"
