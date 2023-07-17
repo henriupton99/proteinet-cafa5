@@ -30,6 +30,19 @@ def extract_go_terms_and_branches(file_path):
 
     return go_terms_dict
 
+def generate_labels_matrix(ids, labels_names, id_labels, go_terms_map):
+    labels_matrix = np.zeros((len(ids), len(labels_names)))
+
+    for index, id in tqdm(enumerate(ids)):
+        try :
+            id_gos_list = id_labels[id]
+            temp = [go_terms_map[go] for go in labels_names if go in id_gos_list]
+            labels_matrix[index, temp] = 1
+        except:
+            pass
+        
+    return labels_matrix
+
 def get_labels_targets(
     ids : np.ndarray,
     labels : pd.DataFrame,
@@ -52,16 +65,12 @@ def get_labels_targets(
     
     print(len(labels_names))
     go_terms_map = {label: i for i, label in enumerate(labels_names)}
-    labels_matrix = np.zeros((len(ids), len(labels_names)))
-
-    for index, id in enumerate(ids):
-        try :
-            id_gos_list = id_labels[id]
-            temp = [go_terms_map[go] for go in labels_names if go in id_gos_list]
-            labels_matrix[index, temp] = 1
-        except:
-            pass
-
+    labels_matrix = generate_labels_matrix(
+        ids=ids,
+        labels_names=labels_names,
+        id_labels=id_labels,
+        go_terms_map=go_terms_map
+    )
     labels_list = []
     for l in range(labels_matrix.shape[0]):
         labels_list.append(labels_matrix[l, :])
