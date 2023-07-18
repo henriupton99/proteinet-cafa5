@@ -12,7 +12,8 @@ class CONFIG:
     aspects_num_labels = {"BPO" : 713, "CCO" : 151, "MFO" : 136}
     max_go_terms = 1000
     
-    n_epochs = 2
+    train_size = 0.9
+    n_epochs = 5
     batch_size = 512
     lr = 0.001
     
