@@ -4,8 +4,8 @@ import torch
 from tqdm import tqdm
 from torch.utils.data import random_split
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torchmetrics.classification import MultilabelF1Score
-from torchmetrics.classification import MultilabelAccuracy
+#from torchmetrics.classification import MultilabelF1Score
+#from torchmetrics.classification import MultilabelAccuracy
 
 from preprocessing.dataset import ProteinSequenceDataset
 from training.models import LinearModel, CNN1D
@@ -37,12 +37,12 @@ def train_model(
     if model_type == "linear":
         model = LinearModel(input_dim=embeds_dim[embeddings_source], num_classes=num_classes).to(device)
     if model_type == "convolutional":
-        model = CNN1D(input_dim=embeds_dim[embeddings_source], num_classes=aspects_num_labels[aspect]).to(device)
+        model = CNN1D(input_dim=embeds_dim[embeddings_source], num_classes=num_classes).to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr = lr)
     scheduler = ReduceLROnPlateau(optimizer, factor=0.1, patience=1, threshold=0.001, verbose=True)
     CrossEntropy = torch.nn.CrossEntropyLoss()
-    f1_score = MultilabelF1Score(num_labels=num_classes).to(device)
+    #f1_score = MultilabelF1Score(num_labels=num_classes).to(device)
 
     print("BEGIN TRAINING...")
     train_loss_history=[]
@@ -60,9 +60,9 @@ def train_model(
             optimizer.zero_grad()
             preds = model(embed)
             loss= CrossEntropy(preds, targets)
-            score=f1_score(preds, targets)
+            #score=f1_score(preds, targets)
             losses.append(loss.item()) 
-            scores.append(score.item())
+            #scores.append(score.item())
             loss.backward()
             optimizer.step()
         avg_loss = np.mean(losses)
@@ -79,9 +79,9 @@ def train_model(
             embed, targets = embed.to(device), targets.to(device)
             preds = model(embed)
             loss= CrossEntropy(preds, targets)
-            score=f1_score(preds, targets)
+            #score=f1_score(preds, targets)
             losses.append(loss.item())
-            scores.append(score.item())
+            #scores.append(score.item())
         avg_loss = np.mean(losses)
         avg_score = np.mean(scores)
         print("Running Average VAL Loss : ", avg_loss)

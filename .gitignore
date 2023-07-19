@@ -1,5 +1,7 @@
 # data folder
 data/
+colortheme-vscode.jsonc
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

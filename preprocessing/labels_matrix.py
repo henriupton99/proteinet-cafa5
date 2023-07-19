@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import re
-from numba import njit, prange
 from config import CONFIG
 
 def extract_go_terms_and_branches(file_path):
