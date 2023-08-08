@@ -1,7 +1,6 @@
 import torch
 import pandas as pd
 import numpy as np
-import torchmetrics
 from tqdm import tqdm
 from preprocessing.dataset import ProteinSequenceDataset
 from preprocessing.labels_matrix import extract_go_terms_and_branches
@@ -14,7 +13,7 @@ embeds_dim = {
 }
 
 
-def makePredictions(
+def make_predictions(
     aspect,
     max_go_terms,
     model_path,
@@ -39,7 +38,6 @@ def makePredictions(
     print(labels_names)
     
     model = LinearModel(input_dim=embeds_dim[embeddings_source], num_classes=num_labels).to(device)
-    checkpoint = torch.load(model_path)
     model.load_state_dict(torch.load(model_path))
     model.eval()
     

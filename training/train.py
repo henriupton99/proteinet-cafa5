@@ -6,7 +6,6 @@ from torch.utils.data import random_split
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 #from torchmetrics.classification import MultilabelF1Score
 #from torchmetrics.classification import MultilabelAccuracy
-
 from preprocessing.dataset import ProteinSequenceDataset
 from training.models import LinearModel, CNN1D
 

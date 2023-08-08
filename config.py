@@ -1,20 +1,24 @@
 import torch
 
 class CONFIG:
-    
+    # CONSTANTS FOR DATA PATHS
     MAIN_DIR = "data/cafa-5-protein-function-prediction"
-    train_sequences_path = MAIN_DIR  + "/Train/train_sequences.fasta"
-    train_labels_path = MAIN_DIR + "/Train/train_terms.tsv"
-    test_sequences_path = MAIN_DIR + "/Test (Targets)/testsuperset.fasta"
-    ia_path = MAIN_DIR + "/IA.txt"
+    GO_OBO_FILE = MAIN_DIR + "/Train/go-basic.obo"
+    TRAIN_SEQUENCES_FASTA = MAIN_DIR  + "/Train/train_sequences.fasta"
+    TRAIN_LABELS = MAIN_DIR + "/Train/train_terms.tsv"
+    TRAIN_IDS = "data/protbert/test_ids.npy"
+    TEST_SEQUENCES_FASTA = MAIN_DIR + "/Test (Targets)/testsuperset.fasta"
+    TARGETS_PATH = "data/train-labels-targets/"
     
-    aspects = ["BPO", "CCO", "MFO"]
-    aspects_num_labels = {"BPO" : 713, "CCO" : 151, "MFO" : 136}
-    max_go_terms = 1000
-    
-    train_size = 0.9
-    n_epochs = 5
-    batch_size = 512
-    lr = 0.001
-    
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    # CONSTANTS FOR ASPECTS :
+    ASPECTS = ["BPO", "CCO", "MFO"]
+    ASPECTS_LABELS = {"BPO" : 713, "CCO" : 151, "MFO" : 136}
+    MAX_GO_TERMS = 1000
+
+    # CONSTANTS FOR TRAINING : 
+    TRAIN_SIZE = 0.9
+    N_EPOCHS = 5
+    BATCHS_SIZE = 512
+    LEARNING_RATE = 0.001
+    DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
