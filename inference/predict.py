@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from preprocessing.dataset import ProteinSequenceDataset
-from preprocessing.labels_matrix import extract_go_terms_and_branches
+from preprocessing.targets import extract_go_terms_and_branches
 from training.models import LinearModel
 
 embeds_dim = {
