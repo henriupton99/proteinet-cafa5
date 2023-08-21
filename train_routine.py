@@ -1,6 +1,5 @@
 from time import time
 from config import CONFIG
-from preprocessing import targets
 from training.train import train_model
 
 for aspect in CONFIG.aspects:
