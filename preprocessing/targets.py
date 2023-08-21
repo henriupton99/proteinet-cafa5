@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import re
+import gc
 
 def extract_go_terms_and_branches(
     file_path : str
@@ -19,17 +20,14 @@ def extract_go_terms_and_branches(
     with open(file_path, 'r') as file:
         content = file.read()
         stanzas = re.findall(r'\[Term\][\s\S]*?(?=\n\[|$)', content)
-
     go_terms_dict = {}
     for stanza in stanzas:
         go_id = re.search(r'^id: (GO:\d+)', stanza, re.MULTILINE)
         if go_id:
             go_id = go_id.group(1)
-
         namespace = re.search(r'^namespace: (\w+)', stanza, re.MULTILINE)
         if namespace:
             namespace = namespace.group(1)
-
         if go_id and namespace:
             branch_abbr = {'biological_process': 'BPO', 'cellular_component': 'CCO', 'molecular_function': 'MFO'}
             go_terms_dict[go_id] = branch_abbr[namespace]
@@ -49,7 +47,7 @@ def generate_labels_matrix(
 
     """
     labels_matrix = np.zeros((len(ids), len(labels_names)))
-
+    
     for index, id in tqdm(enumerate(ids)):
         try :
             id_gos_list = id_labels[id]
@@ -63,40 +61,49 @@ def generate_labels_matrix(
 def generate_targets(
     ids_path : str,
     labels_path : str,
+    weights_path : str,
     go_obo_path : str,
+    evidence_codes_path : str,
     targets_path : str,
-    max_go_terms : int,
     aspects_list : str,
+    go_terms_per_aspects : dict[int]
     ):
     """Function to generate labels (targets) for a given aspect (BPO, CCO, or MFO) for each protein id in ids, based on labels dataframe.
     NB : For memory usage and models precision reasons, we only consider a subset of all GO terms labels
-    We consider to top K most present (based on max_go_term input number)
+    We consider to top K most frequent for each aspect (based on go_terms_per_aspects input dictionnary)
 
     Args:
         ids_path (str): path to protein ids 
         labels_paths (str): path to labels annotations dataframe for each protein in ids
+        weights_path (str): path to IA weights for GO terms metric computation
         go_obo_path (str) : path to obo graph file
+        evidence_codes_path (str) : path to evidence codes to filter for EXP GO terms
         targets_path (str) : path where to save the target labels
-        max_go_terms (int): number of GO terms to consider (top K most frequent)
         aspects_list (str): list of aspects to consider
-
-    Returns:
-        labels_df : dataframe that gather proteins ids and their respective labels vector
+        go_terms_per_aspects (dict[int]): number of GO term classes to consider per aspect
     """
     ids = np.load(ids_path)
     labels = pd.read_csv(labels_path, sep = "\t")
-    print(labels)
-    print("GENERATE TARGETS FOR ENTRY IDS (" + str(max_go_terms) + " MAX TOTAL GO TERMS)")
+    colnames = ["term", "weight"]
+    ia_weights = pd.read_csv(weights_path, sep = "\t", names = colnames, header=None)
+    evidence_codes = pd.read_parquet(evidence_codes_path)
+    evidence_codes = evidence_codes[evidence_codes["EvidenceCode"].notnull()]["term"].unique().tolist()
+    
     for aspect in aspects_list:
-        top_terms = labels.groupby("term")["EntryID"].count().sort_values(ascending=False).to_frame()
-        map_go_terms_aspects=extract_go_terms_and_branches(
-            file_path=go_obo_path
-            )
+        print("="*25)
+        print("START LOADING FOR ASPECT {}".format(aspect))
+        aspects_labels = labels[labels["aspect"] == aspect]
+        aspects_labels = aspects_labels[aspects_labels["term"].isin(evidence_codes)]
+        top_terms = aspects_labels.groupby("term")["EntryID"].count().sort_values(ascending=False).to_frame()
+        map_go_terms_aspects = extract_go_terms_and_branches(
+                                file_path=go_obo_path
+                                )
         top_terms["aspect"] = top_terms.index.map(map_go_terms_aspects)
-        print(top_terms[:max_go_terms])
-        labels_names = top_terms[:max_go_terms]
-        labels_names = labels_names[labels_names.aspect == aspect].index.values
-        print("NUMBER OF GO TERMS IN " + aspect + " GROUP :" + str(len(labels_names)))
+        labels_names = top_terms[:go_terms_per_aspects[aspect]]
+        labels_names = labels_names.index.values
+        weights_df = pd.DataFrame(data={"term" : labels_names})
+        weights_df = weights_df.merge(ia_weights, on = "term", how = "left")
+        print("NUMBER OF GO TERMS IN {} SUBSET : {}".format(aspect,str(len(labels_names))))
         train_labels_sub = labels[(labels.term.isin(labels_names)) & (labels.EntryID.isin(ids))]
         id_labels = train_labels_sub.groupby('EntryID')['term'].apply(list).to_dict()
         go_terms_map = {label: i for i, label in enumerate(labels_names)}
@@ -111,5 +118,13 @@ def generate_targets(
             labels_list.append(labels_matrix[l, :])
 
         labels_df = pd.DataFrame(data={"EntryID":ids, "labels_vect":labels_list})
-        labels_df.to_pickle(targets_path + "train_targets_"+ aspect +".pkl")
-        print("GENERATION FINISHED!")
+        labels_df.to_pickle(targets_path + "/train_targets_{}.pkl".format(aspect))
+        weights_df.to_csv(targets_path + "/weights_{}.csv".format(aspect),index=None)
+        del aspects_labels, labels_df, weights_df, labels_list, labels_matrix, go_terms_map
+        gc.collect()
+        print("GENERATION FINISHED FOR ASPECT {}".format(aspect))
+    
+    del ids, labels, ia_weights, evidence_codes
+    gc.collect()
+    print("GENERATION FINISHED ! :D")
+    return 
