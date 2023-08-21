@@ -1,14 +1,21 @@
-# CAFA 5 Kaggle Competition : Protein Function Prediction
+# [CAFA 5 Kaggle Competition : Protein Function Prediction](https://www.kaggle.com/competitions/cafa-5-protein-function-prediction/overview)
 
-General Baseline Kaggle Notebook : https://www.kaggle.com/code/henriupton/proteinet-pytorch-ems2-t5-protbert-embeddings
+We took a look at the competition context and developed a first model for this 5th edition of the CAFA competition named **proteiNet** : https://www.kaggle.com/code/henriupton/proteinet-pytorch-ems2-t5-protbert-embeddings
 
-Expert Based Predictions Notebook : 
+Following this, we implemented various additions to build its big brother: **ProteiNet v2**! This new version actually aims to train not one, not two, but 3 models, all three specialized in predicting a group of GOs of a particular aspect among the three sets presented for CAFA5: Molecular Function (MF), Biological Process (BP), and Cellular Component (CC).
+
+The first section of proteiNet v2 is dedicated to the training part of the models. If you want to have a look into the inference section, follow this link : https://www.kaggle.com/code/henriupton/proteinet-aspects-experts-infer
+
+The second section of proteiNet v2 is dedicated to the inference part from the models trained in first section. If you want to have a look into the inference section, follow this link : https://www.kaggle.com/code/henriupton/proteinet-v2-inference-notebook
+
+Feel free to give feedback for improvement !
+
 ...
 ## 1. Problem Framing
 
 This Kaggle competition aims to predict the function of proteins using their amino-acid sequences and additional data. Understanding protein function is crucial for comprehending cellular processes and developing new treatments for diseases. With the abundance of genomic sequence data available, assigning accurate biological functions to proteins becomes challenging due to their multifunctionality and interactions with various partners. This competition, hosted by the Function Community of Special Interest (Function-COSI), brings together computational biologists, experimental biologists, and biocurators to improve protein function prediction through data science and machine learning approaches. The goal is to contribute to advancements in medicine, agriculture, and overall human and animal health.
 
-![image-intro](figures/Computational_solvent_mapping_of_AMA1_using_FTMAP.TIF.jpg)
+<img src="https://structuralbioinformatician.files.wordpress.com/2013/03/1ece.gif">
 
 ## 2. What to submit ?
 
