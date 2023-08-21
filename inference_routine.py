@@ -4,13 +4,12 @@ import pandas as pd
 from inference.predict import make_predictions
 
 sub = pd.DataFrame()
-for aspect in ["BPO", "CCO", "MFO"]:
-    temp =make_predictions(
-            aspect = "BPO",
-            max_go_terms = CONFIG.max_go_terms,
-            model_path = "./models/expert_model_BPO.pt" ,
-            embeddings_source = "ESM2",
-            device = CONFIG.device
+for aspect in CONFIG.ASPECTS:
+    temp = make_predictions(
+            aspect = aspect,
+            prob_threshold = CONFIG.PROB_THRESHOLD,
+            embeddings_source = CONFIG.EMBEDDINGS_SOURCE,
+            device = CONFIG.DEVICE
             )
     sub = pd.concat([sub, temp])
     del temp

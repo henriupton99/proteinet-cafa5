@@ -19,7 +19,7 @@ class CONFIG:
     # CONSTANTS FOR TRAINING : 
     EMBEDDINGS_SOURCE = "ESM2"
     K_FOLDS = 5
-    N_EPOCHS = 15
+    N_EPOCHS = 1
     BATCHS_SIZE = 256
     LEARNING_RATE = 0.001
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

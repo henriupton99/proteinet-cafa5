@@ -9,11 +9,11 @@ embeds_dim = {
 
 class LinearModel(torch.nn.Module):
 
-    def __init__(self, input_dim, num_classes):
+    def __init__(self, input_dim, hidden_dim, num_classes):
         super(LinearModel, self).__init__()
-        self.linear1 = torch.nn.Linear(input_dim, 1252)
+        self.linear1 = torch.nn.Linear(input_dim, hidden_dim)
         self.activation1 = torch.nn.ReLU()
-        self.linear2 = torch.nn.Linear(1252, num_classes)
+        self.linear2 = torch.nn.Linear(hidden_dim, num_classes)
 
     def forward(self, x):
         x = self.linear1(x)
