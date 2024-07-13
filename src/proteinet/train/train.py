@@ -5,7 +5,7 @@ import os
 import gc
 import torch
 from preprocessing.dataset import ProteinSequenceDataset
-from training.models import LinearModel
+from train.models import LinearModel
 
 from sklearn.model_selection import KFold
 from torchmetrics.classification import MultilabelF1Score

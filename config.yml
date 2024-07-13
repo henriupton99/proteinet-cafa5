@@ -1,0 +1,33 @@
+paths:
+ go_obo_files: data/cafa5/Train/go-basic.obo
+ train_sequences_fasta: data/cafa5/Train/train_sequences.fasta
+ test_sequences_fasta: data/cafa5/Test/testsuperset.fasta
+ train_labels: data/cafa5/Train/train_terms.tsv
+ train_ids: data/cafa5/embeddings/esm2/train_ids.npy
+ embeddings: data/cafa5/embeddings
+ ia_weights: data/cafa5/IA.txt
+ targets: data/cafa5/train-labels-targets
+ evidence_codes: data/cafa5/evidence-codes/propagated_evidenceCode.parquet
+
+preproc:
+ aspects: 
+  - BPO
+  - CCO
+  - MFO
+ aspects_labels: {BPO: 1100, CCO: 300, MFO: 450}
+
+train:
+ embeddings_source: esm2
+ k_folds: 5
+ n_epochs: 1
+ batch_size: 256
+ learning_rate: 0.001
+ use_gpu : true
+ aspects_hidden_size:
+  - BPO: 1256
+  - CCO: 512
+  - MFO: 850
+ validation_mode: false
+
+postproc:
+ prob_threshold: 0.10

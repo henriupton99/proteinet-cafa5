@@ -3,8 +3,8 @@ import gc
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-from preprocessing.dataset import ProteinSequenceDataset
-from training.models import LinearModel
+from preproc.dataset import ProteinSequenceDataset
+from train.models import LinearModel
 
 embeds_dim = {
     "T5" : 1024,
